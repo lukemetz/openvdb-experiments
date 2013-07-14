@@ -11,3 +11,14 @@
 *.lai
 *.la
 *.a
+
+#cmake
+CMakeFiles/
+Makefile
+*.cmake
+CMakeCache.txt
+
+run
+
+#results
+*.obj
