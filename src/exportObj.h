@@ -15,7 +15,11 @@ std::string exportObj(const GridType &grid)
   
   std::vector<openvdb::Vec3s> verts;
   std::vector<openvdb::Vec4I> quads;
-  openvdb::tools::volumeToMesh(grid, verts, quads);
+  std::vector<openvdb::Vec3I> tris;
+  
+  float isovalue = 0;
+  float adaptivity = 0;
+  openvdb::tools::volumeToMesh(grid, verts, tris, quads, isovalue, adaptivity);
 
   std::stringstream output;
   output << "g object" << std::endl << std::endl;
@@ -35,6 +39,13 @@ std::string exportObj(const GridType &grid)
             << " " << quad[1]+1 
             << " " << quad[2]+1 
             <<" " << quad[3]+1
+            << std::endl;
+  }
+  
+  for (openvdb::Vec3I tri : tris) {
+    output << "f " << tri[0]+1
+            << " " << tri[1]+1 
+            << " " << tri[2]+1 
             << std::endl;
   }
   output << std::endl;
