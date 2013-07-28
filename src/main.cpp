@@ -83,7 +83,6 @@ int main()
     makeSphere(*grid, /*radius=*/50.0, /*center=*/openvdb::Vec3f(1.5, 2, 3));
     std::cout << "done sphere" << std::endl;
 
-
     std::ofstream file;
     file.open("out.obj");
     file << exportObj(*grid);
