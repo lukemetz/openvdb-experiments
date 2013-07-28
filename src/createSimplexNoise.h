@@ -17,9 +17,9 @@ createSimplexNoise(openvdb::Vec3i size, std::vector<openvdb::Vec3f> scales)
   //Todo fix cache misses
   SimplexNoise1234 noise;
   auto accessor = grid->getAccessor();
-  for (int x=-size.x(); x < size.x(); x++) {
-    for (int y=-size.y(); y < size.y(); y++) {
-      for (int z=-size.z(); z < size.z(); z++) {
+  for (int x=-size.x(); x < size.x()+1; x++) {
+    for (int y=-size.y(); y < size.y()+1; y++) {
+      for (int z=-size.z(); z < size.z()+1; z++) {
         openvdb::Coord coord(x, y, z);
         float value = noise.noise(x * scales[0].x(),
                                   y * scales[0].y(),

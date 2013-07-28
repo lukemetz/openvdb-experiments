@@ -77,7 +77,7 @@ int main()
     openvdb::initialize();
 
     // Create an empty floating-point grid with background value 0. 
-    openvdb::FloatGrid::Ptr grid = openvdb::FloatGrid::create(/*background value=*/2.0);
+    openvdb::FloatGrid::Ptr grid = openvdb::FloatGrid::create(/*background value=*/100.0);
 
     // Get an accessor for coordinate-based access to voxels.
     openvdb::FloatGrid::Accessor accessor = grid->getAccessor();
@@ -86,9 +86,9 @@ int main()
     makeSphere(*grid, /*radius=*/50.0, /*center=*/openvdb::Vec3f(1.5, 2, 3));
     std::cout << "done sphere" << std::endl;
     std::vector<openvdb::Vec3f> scales{openvdb::Vec3f(.1, .1, .2)};
-    auto noiseGrid = createSimplexNoise<openvdb::FloatGrid>(openvdb::Vec3i(100, 100, 100), scales);
+    auto noiseGrid = createSimplexNoise<openvdb::FloatGrid>(openvdb::Vec3i(60, 60, 60), scales);
     
-    openvdb::FloatGrid::Ptr scalarGrid = openvdb::FloatGrid::create(/*background value=*/2.0);
+    openvdb::FloatGrid::Ptr scalarGrid = openvdb::FloatGrid::create(/*background value=*/6.0);
 
     openvdb::tools::compMul(*noiseGrid, *scalarGrid);
     openvdb::tools::compSum(*grid, *noiseGrid);
