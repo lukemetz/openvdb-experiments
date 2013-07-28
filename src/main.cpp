@@ -3,6 +3,8 @@
 #include <openvdb/tools/VolumeToMesh.h>
 #include <fstream>
 
+#include "exportObj.h"
+
 // Populate the given grid with a narrow-band level set representation of a sphere.
 // The width of the narrow band is determined by the grid's background value.
 // (Example code only; use tools::createSphereSDF() in production.)
@@ -81,66 +83,9 @@ int main()
     makeSphere(*grid, /*radius=*/50.0, /*center=*/openvdb::Vec3f(1.5, 2, 3));
     std::cout << "done sphere" << std::endl;
 
-    openvdb::tools::VolumeToMesh mesher(0);
-    mesher(*grid);
-    
+
     std::ofstream file;
-    file.precision(5);
     file.open("out.obj");
- 
-    file << "g object" << std::endl << std::endl;
-
-    using openvdb::Index64;
-
-    // Copy points and generate point normals.
-
-    for (Index64 n = 0, i = 0,  N = mesher.pointListSize(); n < N; ++n) {
-        const openvdb::Vec3s& p = mesher.pointList()[n];
-        file << "v " << p[0] << " " << p[1] << " " << p[2] << std::endl;
-    }
-    std::cout << mesher.pointListSize()<< " points found" << std::endl;
-    
-    file << std::endl;
-    // Copy primitives
-    
-    std::cout << mesher.polygonPoolListSize() << "pool size" << std::endl;
-    openvdb::tools::PolygonPoolList& polygonPoolList = mesher.polygonPoolList();
-    Index64 numQuads = 0;
-    for (Index64 n = 0, N = mesher.polygonPoolListSize(); n < N; ++n) {
-        std::cout << polygonPoolList[n].numQuads() << ", " << polygonPoolList[n].numQuads() << std::endl;
-        numQuads += polygonPoolList[n].numQuads();
-    }
-    std::cout << numQuads << " Quads found" << std::endl;
-
-    std::vector<openvdb::Vec4I> indices;
-    indices.reserve(numQuads);
-    openvdb::Vec3d normal, e1, e2;
-
-    for (Index64 n = 0, N = mesher.polygonPoolListSize(); n < N; ++n) {
-        const openvdb::tools::PolygonPool& polygons = polygonPoolList[n];
-        for (Index64 i = 0, I = polygons.numQuads(); i < I; ++i) {
-            const openvdb::Vec4I& quad = polygons.quad(i);
-            indices.push_back(quad);
-
-            e1 = mesher.pointList()[quad[1]];
-            e1 -= mesher.pointList()[quad[0]];
-            e2 = mesher.pointList()[quad[2]];
-            e2 -= mesher.pointList()[quad[1]];
-            normal = e1.cross(e2);
-
-            file << "f " << quad[0]+1 << " " << quad[1]+1 << " " << quad[2]+1 <<" " << quad[3]+1 << std::endl;
-            const double length = normal.length();
-            if (length > 1.0e-7) normal *= (1.0 / length);
-
-            //file << "vn " << normal[0] << " " << normal[1] << " " << normal[2] << std::endl;
-        }
-    }
-    
-    file << std::endl;
-    
-    int onNormal = 0;
-    for (openvdb::Vec4I indice : indices) {
-      //file << "f " << indice[0] << " " << indice[1] << " " << indice[2] << " " << indice[3] << std::endl;
-    }
-
+    file << exportObj(*grid);
+    file.close();
 }
