@@ -6,6 +6,8 @@
 
 #include "exportObj.h"
 #include "createSimplexNoise.h"
+#include "createBox.h"
+
 #include "simplexnoise1234.h"
 
 // Populate the given grid with a narrow-band level set representation of a sphere.
@@ -86,13 +88,15 @@ int main()
     makeSphere(*grid, /*radius=*/50.0, /*center=*/openvdb::Vec3f(1.5, 2, 3));
     std::cout << "done sphere" << std::endl;
     std::vector<openvdb::Vec3f> scales{openvdb::Vec3f(.1, .1, .2)};
+    
+    grid = createBox<openvdb::FloatGrid>(openvdb::Vec3i(40, 40, 20));
+    
     auto noiseGrid = createSimplexNoise<openvdb::FloatGrid>(openvdb::Vec3i(60, 60, 60), scales);
     
-    openvdb::FloatGrid::Ptr scalarGrid = openvdb::FloatGrid::create(/*background value=*/6.0);
-
+    openvdb::FloatGrid::Ptr scalarGrid = openvdb::FloatGrid::create(/*background value=*/2.0);
     openvdb::tools::compMul(*noiseGrid, *scalarGrid);
     openvdb::tools::compSum(*grid, *noiseGrid);
-
+    
     std::ofstream file;
     file.open("out.obj");
     file << exportObj(*grid);

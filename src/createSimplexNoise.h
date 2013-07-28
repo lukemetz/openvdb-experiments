@@ -11,7 +11,6 @@ template <typename GridType>
 typename GridType::Ptr
 createSimplexNoise(openvdb::Vec3i size, std::vector<openvdb::Vec3f> scales)
 {
-  typedef typename GridType::ValueType ValueT;
   typename GridType::Ptr grid = openvdb::createGrid<GridType>(0);
 
   //Todo fix cache misses
