@@ -11,8 +11,6 @@
 template <typename GridType>
 std::string exportObj(const GridType &grid)
 {
-  //Mesh the trid 
-  
   std::vector<openvdb::Vec3s> verts;
   std::vector<openvdb::Vec4I> quads;
   std::vector<openvdb::Vec3I> tris;
