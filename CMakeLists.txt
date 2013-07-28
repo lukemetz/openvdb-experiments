@@ -12,7 +12,6 @@ add_definitions("-std=c++11")
 add_definitions("-pthread")
 
 target_link_libraries(run openvdb)
-target_link_libraries(run noise)
 target_link_libraries(run tbb)
 target_link_libraries(run Half)
 
