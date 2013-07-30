@@ -7,6 +7,9 @@
 #include "exportObj.h"
 #include "createSimplexNoise.h"
 #include "createBox.h"
+#include "createFunction.h"
+
+#include <openvdb/tools/GridTransformer.h>
 
 #include "simplexnoise1234.h"
 
@@ -85,15 +88,22 @@ int main()
     openvdb::FloatGrid::Accessor accessor = grid->getAccessor();
     std::cout << "making sphere" << std::endl;
 
-    makeSphere(*grid, /*radius=*/50.0, /*center=*/openvdb::Vec3f(1.5, 2, 3));
+    //makeSphere(*grid, /*radius=*/50.0, /*center=*/openvdb::Vec3f(1.5, 2, 3));
     std::cout << "done sphere" << std::endl;
-    std::vector<openvdb::Vec3f> scales{openvdb::Vec3f(.1, .1, .2)};
+    std::vector<openvdb::Vec3f> scales{openvdb::Vec3f(.001, .001, .002)};
     
-    grid = createBox<openvdb::FloatGrid>(openvdb::Vec3i(40, 40, 20));
+    //grid = createBox<openvdb::FloatGrid>(openvdb::Vec3i(40, 40, 20));
+    SimplexNoise1234 s;
+  
+    grid = createFunction<openvdb::FloatGrid>(openvdb::Vec3i(60, 60, 60), [&](int x, int y, int z) {
+      return y;
+    });
     
-    auto noiseGrid = createSimplexNoise<openvdb::FloatGrid>(openvdb::Vec3i(60, 60, 60), scales);
+    //auto grid2 = createBox<openvdb::FloatGrid>(openvdb::Vec3i(6, 2, 2));
+    auto noiseGrid = createSimplexNoise <openvdb::FloatGrid>(openvdb::Vec3i(60,60,60), {openvdb::Vec3f(.1, .1, .1)});
     
-    openvdb::FloatGrid::Ptr scalarGrid = openvdb::FloatGrid::create(/*background value=*/2.0);
+    openvdb::FloatGrid::Ptr scalarGrid = openvdb::FloatGrid::create(/*background value=*/10.0);
+
     openvdb::tools::compMul(*noiseGrid, *scalarGrid);
     openvdb::tools::compSum(*grid, *noiseGrid);
     
